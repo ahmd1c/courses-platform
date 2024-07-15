@@ -115,6 +115,12 @@ export const lessons = pgTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
+    instructorId: integer("instructor_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "set null",
+        onUpdate: "cascade",
+      }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
