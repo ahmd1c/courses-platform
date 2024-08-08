@@ -12,11 +12,11 @@ const diskStorage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     if (file.fieldname === "image") {
-      cb(null, "images/image" + "-" + Date.now() + path.extname(file.originalname));
+      cb(null, "image" + "-" + Date.now() + path.extname(file.originalname));
     }
 
     if (file.fieldname === "video") {
-      cb(null, "videos/video" + "-" + Date.now() + path.extname(file.originalname));
+      cb(null, "video" + "-" + Date.now() + path.extname(file.originalname));
     }
   },
 });

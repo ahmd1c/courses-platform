@@ -6,7 +6,10 @@ import { AppError } from "../errorHandler/App-error-class";
 
 export const authUser = asyncHandler(async (req, res, next) => {
   if (!req.cookies?.token) throw new AppError("UnAuthenticated , please login", 401);
-  const decoded = jwt.verify(req.cookies.token, process.env.SECRET_KEY!) as JwtPayload;
+  const decoded = jwt.verify(
+    req.cookies.token,
+    process.env.JWT_SECRET_KEY!
+  ) as JwtPayload;
   const user = await UserServicesInstance.getUserById(decoded.id);
   if (!user) throw new AppError("User Not Found", 404);
   req.user = { id: user.id!, role: user.role! };
