@@ -13,6 +13,11 @@ export function validateInsertReview(req: Request, res: Response, next: NextFunc
       error: "Un authorized",
     });
   }
+  if (Number(req.body.rating) < 1 || Number(req.body.rating) > 5) {
+    return res.status(400).json({
+      error: "Rating must be between 1 and 5",
+    });
+  }
   const result = insertReviewSchema.safeParse(req.body);
   if (!result.success) {
     return res.status(400).json({ error: result.error.issues });
