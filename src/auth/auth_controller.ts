@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { AuthServicesInstance } from "./auth_services";
 import asynHandler from "../utils/asyncHandler";
 import createTokenAndCookie from "../utils/createToken";
@@ -9,11 +10,17 @@ export const registerUserController = asynHandler(async (req, res, next) => {
     password,
     name,
   });
-  console.log("readced");
-
-  const { password: userPass, ...user } = newUser;
+  const { id, name: username, email: userEmail, role } = newUser;
   createTokenAndCookie(newUser.id, res);
-  res.status(201).json({ message: "User Created Successfully", user });
+  res.status(201).json({
+    message: "User Created Successfully",
+    user: {
+      id,
+      name: username,
+      email: userEmail,
+      role,
+    },
+  });
 });
 
 export const loginUserController = asynHandler(async (req, res, next) => {
@@ -21,7 +28,9 @@ export const loginUserController = asynHandler(async (req, res, next) => {
   const user = await AuthServicesInstance.loginUser({ email, password });
   const { password: userPass, ...safeUser } = user;
   createTokenAndCookie(user.id, res);
-  res.status(200).json({ message: "User Logged In Successfully", user: safeUser });
+  res
+    .status(200)
+    .json({ message: "User Logged In Successfully", user: safeUser });
 });
 
 export const logOutUserController = asynHandler(async (req, res, next) => {
@@ -44,6 +53,7 @@ export const resetPasswordController = asynHandler(async (req, res, next) => {
 export const updatePasswordController = asynHandler(async (req, res, next) => {
   const { oldPassword, newPassword } = req.body;
   const user = await AuthServicesInstance.updatePassword(
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     req.user?.id!,
     oldPassword,
     newPassword
