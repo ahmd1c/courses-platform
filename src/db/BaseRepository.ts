@@ -1,17 +1,16 @@
-import { TQueryObj, TInsert, TProjection } from "../types";
+import { TQueryObj, TProjection } from "../types";
 import db from "./index";
 import { desc, count } from "drizzle-orm";
 import { PgTableWithColumns } from "drizzle-orm/pg-core";
-import { TSearchedEntry } from "../types";
 import QueryCustomizer from "./db-utils/Api_Features";
-import { filterationFunction, projectionFunction } from "./db-utils/prepare-query";
+import { filter, project } from "./db-utils/prepare-query";
 
 abstract class BaseRepository<T extends PgTableWithColumns<any>> {
   constructor(readonly table: T) {
     this.table = table;
   }
 
-  async insert(data: TInsert<T>) {
+  async insert(data: T["$inferInsert"]) {
     return db.insert(this.table).values(data).returning();
   }
 
@@ -27,21 +26,21 @@ abstract class BaseRepository<T extends PgTableWithColumns<any>> {
   }
 
   async findOne(
-    filterObj: TSearchedEntry<T["$inferSelect"]>,
+    filterObj: Partial<T["$inferSelect"]>,
     projection?: TProjection<T["$inferSelect"]>
   ) {
-    const filteredQuery = filterationFunction(filterObj, this.table);
-    const selectObj = projectionFunction(projection, this.table);
+    const filteredQuery = filter(filterObj, this.table);
+    const selectObj = project(projection, this.table);
     return db.select(selectObj).from(this.table).where(filteredQuery).limit(1);
   }
 
   async update(
-    filterObj: TSearchedEntry<T["$inferSelect"]>,
-    data: Partial<TInsert<T>>,
+    filterObj: Partial<T["$inferSelect"]>,
+    data: Partial<T["$inferInsert"]>,
     projection?: TProjection<T["$inferSelect"]>
   ) {
-    const filteredQuery = filterationFunction(filterObj, this.table);
-    const selectObj = projectionFunction(projection, this.table);
+    const filteredQuery = filter(filterObj, this.table);
+    const selectObj = project(projection, this.table);
     return db
       .update(this.table)
       .set({
@@ -52,8 +51,8 @@ abstract class BaseRepository<T extends PgTableWithColumns<any>> {
       .returning(selectObj);
   }
 
-  async delete(filterObj: TSearchedEntry<T["$inferSelect"]>) {
-    const filteredQuery = filterationFunction(filterObj, this.table);
+  async delete(filterObj: Partial<T["$inferSelect"]>) {
+    const filteredQuery = filter(filterObj, this.table);
     return db.delete(this.table).where(filteredQuery).returning({ id: this.table.id });
   }
 }
