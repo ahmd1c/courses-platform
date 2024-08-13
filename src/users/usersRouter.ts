@@ -1,6 +1,8 @@
 import { Router } from "express";
 import {
   getAllUsersController,
+  getProfile,
+  getSelfProfile,
   insertProfileController,
   updateProfileController,
 } from "./usersController";
@@ -12,7 +14,9 @@ const router = Router();
 
 router.get("/", authUser, allowedRoles(["admin"]), getAllUsersController);
 router.post("/profiles", authUser, validateInsertProfile, insertProfileController);
-router.put("/profiles", authUser, validateUpdateProfile, updateProfileController);
+router.put("/profiles/self", authUser, validateUpdateProfile, updateProfileController);
+router.get("/profiles/self", authUser, getSelfProfile);
+router.get("/profiles/:id", getProfile);
 
 router.use("/whishlist", whishlistRouter);
 export default router;
