@@ -49,7 +49,12 @@ class UserServices implements IUserServices {
   async getAllUsers() {
     const users = await this.UserModel.findMany();
     if (!users.length) throw new AppError("Users Not Found", 404);
-    return users;
+    return users.map((user: TUser) => ({
+      ...user,
+      password: undefined,
+      passwordResetToken: undefined,
+      passwordResetTokenExpires: undefined,
+    }));
   }
 }
 
