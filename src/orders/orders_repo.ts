@@ -1,13 +1,13 @@
 import { and, desc, eq } from "drizzle-orm";
 import { orders, orderItems, couponUsage, enrollments } from "./../db/schema/schema";
-import queryCustomizer from "../db/db-utils/Api_Features";
+import QueryCustomizer from "../db/db-utils/Api_Features";
 import BaseRepository from "../db/BaseRepository";
 import db from "../db";
 
 export class OrderRepository extends BaseRepository<typeof orders> {
   override async findMany(options?: any) {
     if (options && Object.keys(options).length) {
-      queryCustomizer.initialize(options, orders);
+      const queryCustomizer = QueryCustomizer.initialize(options, orders);
       return queryCustomizer
         .build()
         .innerJoin(orderItems, eq(orders.orderId, orderItems.orderId));
