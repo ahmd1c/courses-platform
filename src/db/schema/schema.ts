@@ -108,7 +108,7 @@ export const lessons = pgTable(
     position: integer("position").notNull(),
     isPublished: boolean("is_published").notNull().default(false),
     isFree: boolean("is_free").notNull().default(false),
-    videoUrl: text("video_url").notNull(),
+    videoUrl: text("video_url"),
     courseId: integer("course_id")
       .notNull()
       .references(() => courses.id, {
@@ -222,8 +222,8 @@ export const coupons = pgTable(
     discount: integer("discount").notNull(),
     maxDiscount: integer("discount").notNull(),
     typeOfDiscount: typeOfDiscountEnum("type_of_discount").notNull(),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
     expiryDate: timestamp("expiry_date").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (table) => ({
     index: index("code").on(table.code),
