@@ -8,4 +8,5 @@
 **/Dockerfile*
 **/node_modules
 **/dist
+./drizzle/migrations/**
 README.md
